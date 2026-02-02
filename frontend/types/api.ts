@@ -223,3 +223,29 @@ export interface FilterConfig {
   placeholder?: string;
   options?: FilterOption[];
 }
+
+// Notification Types
+
+export interface NotificationData {
+  type: string;
+  title: string;
+  message: string;
+  [key: string]: unknown;
+}
+
+export interface Notification {
+  id: string;
+  type: string;
+  data: NotificationData;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface UnreadCountResponse {
+  count: number;
+}
+
+export interface NotificationQueryParams {
+  page?: number;
+  per_page?: number;
+}

@@ -8,9 +8,11 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\ProfileRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
+use App\Services\Contracts\NotificationServiceInterface;
 use App\Services\Contracts\ProfileServiceInterface;
 use App\Services\Contracts\RoleServiceInterface;
 use App\Services\Contracts\UserServiceInterface;
+use App\Services\NotificationService;
 use App\Services\ProfileService;
 use App\Services\RoleService;
 use App\Services\UserService;
@@ -25,6 +27,7 @@ class RepositoryServiceProvider extends ServiceProvider
         ProfileServiceInterface::class => ProfileService::class,
         RoleRepositoryInterface::class => RoleRepository::class,
         RoleServiceInterface::class => RoleService::class,
+        NotificationServiceInterface::class => NotificationService::class,
     ];
 
     public function register(): void

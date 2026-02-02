@@ -6,6 +6,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { useMe } from '@/hooks/useAuth';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { ThemeCustomizer } from '@/components/theme-customizer';
+import { NotificationBell } from '@/components/notifications/notification-bell';
+import { NotificationProvider } from '@/components/notifications/notification-provider';
 import {
   SidebarInset,
   SidebarProvider,
@@ -43,26 +45,29 @@ export default function AdminLayout({
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <div className="flex-1" />
-          <ThemeCustomizer />
-        </header>
-        <main className="flex-1 p-4 md:p-6">
-          {isLoadingUser ? (
-            <div className="space-y-4">
-              <Skeleton className="h-8 w-1/4" />
-              <Skeleton className="h-32 w-full" />
-            </div>
-          ) : (
-            children
-          )}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <NotificationProvider>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <div className="flex-1" />
+            <NotificationBell />
+            <ThemeCustomizer />
+          </header>
+          <main className="flex-1 p-4 md:p-6">
+            {isLoadingUser ? (
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-1/4" />
+                <Skeleton className="h-32 w-full" />
+              </div>
+            ) : (
+              children
+            )}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </NotificationProvider>
   );
 }

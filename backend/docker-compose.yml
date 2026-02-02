@@ -98,6 +98,24 @@ services:
     networks:
       - laravel-template
 
+  reverb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-template-reverb
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8094:8080"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - laravel-template
+
 networks:
   laravel-template:
 

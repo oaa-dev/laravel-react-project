@@ -3,9 +3,11 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Notifications\UserCreatedNotification;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Notification;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -63,7 +65,16 @@ class UserService implements UserServiceInterface
 
         $user->load(['profile.media', 'roles']);
 
+        // Notify admins about the new user
+        $this->notifyAdminsOfNewUser($user);
+
         return $user;
+    }
+
+    protected function notifyAdminsOfNewUser(User $createdUser): void
+    {
+        $admins = User::role(['super-admin', 'admin'])->get();
+        Notification::send($admins, new UserCreatedNotification($createdUser));
     }
 
     public function updateUser(int $id, array $data): User
