@@ -11,10 +11,13 @@ import {
   ChevronRight,
   Sparkles,
   Shield,
+  MessageSquare,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useLogout } from '@/hooks/useAuth';
 import { usePermission } from '@/hooks/usePermission';
+import { useMessagingStore } from '@/stores/messagingStore';
+import { useMessagesUnreadCount } from '@/hooks/useMessaging';
 import { getInitials } from '@/lib/utils';
 import {
   Sidebar,
@@ -45,6 +48,7 @@ interface NavItem {
   color: string;
   bgColor: string;
   permission?: string;
+  badge?: 'messages';
 }
 
 const navItems: NavItem[] = [
@@ -72,6 +76,14 @@ const navItems: NavItem[] = [
     permission: 'roles.view',
   },
   {
+    title: 'Messages',
+    href: '/messages',
+    icon: MessageSquare,
+    color: 'text-pink-500',
+    bgColor: 'bg-pink-500/10',
+    badge: 'messages',
+  },
+  {
     title: 'Profile',
     href: '/profile',
     icon: UserCircle,
@@ -85,6 +97,10 @@ export function AppSidebar() {
   const { user } = useAuthStore();
   const logout = useLogout();
   const { hasPermission } = usePermission();
+  const { unreadCount: messagesUnreadCount } = useMessagingStore();
+
+  // Fetch unread count for messages
+  useMessagesUnreadCount();
 
   const handleLogout = () => {
     logout.mutate();
@@ -141,7 +157,12 @@ export function AppSidebar() {
                           />
                         </div>
                         <span className="flex-1">{item.title}</span>
-                        {isActive && (
+                        {item.badge === 'messages' && messagesUnreadCount > 0 && (
+                          <Badge variant="destructive" className="h-5 min-w-5 px-1.5 text-xs">
+                            {messagesUnreadCount > 99 ? '99+' : messagesUnreadCount}
+                          </Badge>
+                        )}
+                        {isActive && !item.badge && (
                           <ChevronRight className="h-4 w-4 text-primary" />
                         )}
                       </Link>

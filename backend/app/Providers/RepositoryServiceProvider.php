@@ -2,16 +2,22 @@
 
 namespace App\Providers;
 
+use App\Repositories\Contracts\ConversationRepositoryInterface;
+use App\Repositories\Contracts\MessageRepositoryInterface;
 use App\Repositories\Contracts\ProfileRepositoryInterface;
 use App\Repositories\Contracts\RoleRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
+use App\Repositories\ConversationRepository;
+use App\Repositories\MessageRepository;
 use App\Repositories\ProfileRepository;
 use App\Repositories\RoleRepository;
 use App\Repositories\UserRepository;
+use App\Services\Contracts\MessagingServiceInterface;
 use App\Services\Contracts\NotificationServiceInterface;
 use App\Services\Contracts\ProfileServiceInterface;
 use App\Services\Contracts\RoleServiceInterface;
 use App\Services\Contracts\UserServiceInterface;
+use App\Services\MessagingService;
 use App\Services\NotificationService;
 use App\Services\ProfileService;
 use App\Services\RoleService;
@@ -28,6 +34,9 @@ class RepositoryServiceProvider extends ServiceProvider
         RoleRepositoryInterface::class => RoleRepository::class,
         RoleServiceInterface::class => RoleService::class,
         NotificationServiceInterface::class => NotificationService::class,
+        ConversationRepositoryInterface::class => ConversationRepository::class,
+        MessageRepositoryInterface::class => MessageRepository::class,
+        MessagingServiceInterface::class => MessagingService::class,
     ];
 
     public function register(): void

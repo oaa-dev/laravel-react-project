@@ -17,8 +17,9 @@ abstract class TestCase extends BaseTestCase
                 return;
             }
 
+            // Check using grant_types for newer Passport versions
             $hasClient = Client::query()
-                ->where('personal_access_client', true)
+                ->whereJsonContains('grant_types', 'personal_access')
                 ->where('revoked', false)
                 ->exists();
 

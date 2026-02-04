@@ -5,6 +5,7 @@ use Laravel\Passport\Passport;
 
 beforeEach(function () {
     $this->actingUser = User::factory()->create();
+    $this->actingUser->assignRole('super-admin');
     Passport::actingAs($this->actingUser);
 });
 

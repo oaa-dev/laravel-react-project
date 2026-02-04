@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\MessagingController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\ProfileController;
@@ -62,6 +63,18 @@ Route::prefix('v1')->group(function () {
         Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead']);
         Route::post('notifications/read-all', [NotificationController::class, 'markAllAsRead']);
         Route::delete('notifications/{id}', [NotificationController::class, 'destroy']);
+
+        // Messaging routes
+        Route::get('conversations', [MessagingController::class, 'conversations']);
+        Route::post('conversations', [MessagingController::class, 'startConversation']);
+        Route::get('conversations/{conversationId}', [MessagingController::class, 'showConversation']);
+        Route::delete('conversations/{conversationId}', [MessagingController::class, 'deleteConversation']);
+        Route::get('conversations/{conversationId}/messages', [MessagingController::class, 'messages']);
+        Route::post('conversations/{conversationId}/messages', [MessagingController::class, 'sendMessage']);
+        Route::post('conversations/{conversationId}/read', [MessagingController::class, 'markAsRead']);
+        Route::get('messages/unread-count', [MessagingController::class, 'unreadCount']);
+        Route::get('messages/search', [MessagingController::class, 'searchMessages']);
+        Route::delete('messages/{messageId}', [MessagingController::class, 'deleteMessage']);
 
         // Broadcasting authentication
         Broadcast::routes();

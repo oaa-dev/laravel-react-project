@@ -23,3 +23,18 @@ export {
   useUploadAvatar,
   useDeleteAvatar,
 } from './useProfile';
+
+// Messaging hooks
+export {
+  useConversations,
+  useConversation,
+  useStartConversation,
+  useDeleteConversation,
+  useMessages,
+  useSendMessage,
+  useMarkConversationAsRead,
+  useMessagesUnreadCount,
+  useSearchMessages,
+  useDeleteMessage,
+  useRealtimeMessaging,
+} from './useMessaging';

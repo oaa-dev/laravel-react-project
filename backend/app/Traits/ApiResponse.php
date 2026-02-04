@@ -5,6 +5,7 @@ namespace App\Traits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\LaravelData\Data;
 
 trait ApiResponse
 {
@@ -24,7 +25,7 @@ trait ApiResponse
             'message' => $message,
         ];
 
-        if (!empty($errors)) {
+        if (! empty($errors)) {
             $response['errors'] = $errors;
         }
 
@@ -37,6 +38,37 @@ trait ApiResponse
             'success' => true,
             'message' => 'Success',
             'data' => $resourceClass::collection($paginator->items()),
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+            ],
+            'links' => [
+                'first' => $paginator->url(1),
+                'last' => $paginator->url($paginator->lastPage()),
+                'prev' => $paginator->previousPageUrl(),
+                'next' => $paginator->nextPageUrl(),
+            ],
+        ]);
+    }
+
+    protected function paginatedDataResponse(LengthAwarePaginator $paginator, string $dataClass, ?int $currentUserId = null): JsonResponse
+    {
+        $items = collect($paginator->items())->map(function ($item) use ($dataClass, $currentUserId) {
+            if ($currentUserId !== null) {
+                return $dataClass::fromModel($item, $currentUserId);
+            }
+
+            return $dataClass::fromModel($item);
+        });
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Success',
+            'data' => $items,
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'last_page' => $paginator->lastPage(),

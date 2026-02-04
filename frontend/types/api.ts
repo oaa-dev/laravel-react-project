@@ -249,3 +249,81 @@ export interface NotificationQueryParams {
   page?: number;
   per_page?: number;
 }
+
+// Messaging Types
+
+export interface Message {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  sender?: MessageSender;
+  body: string;
+  read_at: string | null;
+  is_mine: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MessageSender {
+  id: number;
+  name: string;
+  avatar: Avatar | null;
+}
+
+export interface Conversation {
+  id: number;
+  other_user: MessageSender;
+  latest_message: Message | null;
+  unread_count: number;
+  last_message_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StartConversationRequest {
+  recipient_id: number;
+  message?: string;
+}
+
+export interface SendMessageRequest {
+  body: string;
+}
+
+export interface ConversationQueryParams {
+  page?: number;
+  per_page?: number;
+}
+
+export interface MessageQueryParams {
+  page?: number;
+  per_page?: number;
+}
+
+export interface MessageSearchParams {
+  q: string;
+  page?: number;
+  per_page?: number;
+}
+
+// Real-time message event from WebSocket
+export interface MessageSentEvent {
+  id: number;
+  conversation_id: number;
+  sender_id: number;
+  sender: MessageSender;
+  body: string;
+  read_at: string | null;
+  created_at: string;
+}
+
+// Real-time conversation update event from WebSocket
+export interface ConversationUpdatedEvent {
+  id: number;
+  last_message_at: string | null;
+  latest_message: {
+    id: number;
+    body: string;
+    sender_id: number;
+    created_at: string;
+  } | null;
+}
