@@ -2,8 +2,7 @@
 
 namespace App\Services;
 
-use App\Data\Input\SendMessageData;
-use App\Data\Input\StartConversationData;
+use App\Data\ConversationData;
 use App\Events\ConversationUpdated;
 use App\Events\MessageSent;
 use App\Models\Conversation;
@@ -15,6 +14,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelData\Optional;
 
 class MessagingService implements MessagingServiceInterface
 {
@@ -43,15 +43,15 @@ class MessagingService implements MessagingServiceInterface
         return $conversation;
     }
 
-    public function startConversation(int $userId, array $data): Conversation
+    public function startConversation(int $userId, ConversationData $data): Conversation
     {
-        if ($userId === $data['recipientId']) {
+        if ($userId === $data->recipient_id) {
             throw new \InvalidArgumentException('Cannot start a conversation with yourself');
         }
 
         return DB::transaction(function () use ($userId, $data) {
             // Check if conversation already exists
-            $conversation = $this->conversationRepository->findByUsers($userId, $data['recipientId']);
+            $conversation = $this->conversationRepository->findByUsers($userId, $data->recipient_id);
 
             if ($conversation) {
                 // Restore participant if soft deleted
@@ -63,12 +63,12 @@ class MessagingService implements MessagingServiceInterface
                 // Create new conversation
                 $conversation = $this->conversationRepository->create([
                     'user_one_id' => $userId,
-                    'user_two_id' => $data['recipientId'],
+                    'user_two_id' => $data->recipient_id,
                 ]);
             }
 
             // Send initial message if provided
-            if ($data->message) {
+            if (! $data->message instanceof Optional) {
                 $this->sendMessageInternal($conversation->id, $userId, $data->message);
             }
 

@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Data\UserData;
 use App\Models\User;
 use App\Notifications\UserCreatedNotification;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Services\Contracts\UserServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Notification;
+use Spatie\LaravelData\Optional;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -55,12 +57,16 @@ class UserService implements UserServiceInterface
         return $user;
     }
 
-    public function createUser(array $data): User
+    public function createUser(UserData $data): User
     {
-        $user = $this->userRepository->create($data);
+        $user = $this->userRepository->create([
+            'name' => $data->name,
+            'email' => $data->email,
+            'password' => $data->password,
+        ]);
 
-        if (isset($data['roles'])) {
-            $user->syncRoles($data['roles']);
+        if (! $data->roles instanceof Optional) {
+            $user->syncRoles($data->roles);
         }
 
         $user->load(['profile.media', 'roles']);
@@ -77,12 +83,17 @@ class UserService implements UserServiceInterface
         Notification::send($admins, new UserCreatedNotification($createdUser));
     }
 
-    public function updateUser(int $id, array $data): User
+    public function updateUser(int $id, UserData $data): User
     {
-        $user = $this->userRepository->update($id, $data);
+        $updateData = collect($data->toArray())
+            ->reject(fn ($value) => $value instanceof Optional)
+            ->except('roles')
+            ->toArray();
 
-        if (isset($data['roles'])) {
-            $user->syncRoles($data['roles']);
+        $user = $this->userRepository->update($id, $updateData);
+
+        if (! $data->roles instanceof Optional) {
+            $user->syncRoles($data->roles);
         }
 
         $user->load(['profile.media', 'roles']);

@@ -2,6 +2,7 @@
 
 namespace App\Services\Contracts;
 
+use App\Data\UserData;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -11,9 +12,9 @@ interface UserServiceInterface
 
     public function getUserById(int $id): User;
 
-    public function createUser(array $data): User;
+    public function createUser(UserData $data): User;
 
-    public function updateUser(int $id, array $data): User;
+    public function updateUser(int $id, UserData $data): User;
 
     public function deleteUser(int $id): bool;
 

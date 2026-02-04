@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Data\ConversationData;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\ConversationResource;
 use App\Http\Resources\Api\V1\MessageResource;
@@ -91,10 +92,10 @@ class MessagingController extends Controller
     )]
     public function startConversation(StartConversationRequest $request): JsonResponse
     {
+        $data = ConversationData::from($request->validated());
         $conversation = $this->messagingService->startConversation(
             $request->user()->id,
-            $request->validated('recipient_id'),
-            $request->validated('message')
+            $data
         );
 
         return $this->createdResponse(

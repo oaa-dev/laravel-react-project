@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Data\RoleData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Role\StoreRoleRequest;
 use App\Http\Requests\Api\V1\Role\SyncPermissionsRequest;
@@ -95,7 +96,8 @@ class RoleController extends Controller
     )]
     public function store(StoreRoleRequest $request): JsonResponse
     {
-        $role = $this->roleService->createRole($request->validated());
+        $data = RoleData::from($request->validated());
+        $role = $this->roleService->createRole($data);
 
         return $this->createdResponse(
             new RoleResource($role),
@@ -158,7 +160,8 @@ class RoleController extends Controller
     )]
     public function update(UpdateRoleRequest $request, int $id): JsonResponse
     {
-        $role = $this->roleService->updateRole($id, $request->validated());
+        $data = RoleData::from($request->validated());
+        $role = $this->roleService->updateRole($id, $data);
 
         return $this->successResponse(
             new RoleResource($role),

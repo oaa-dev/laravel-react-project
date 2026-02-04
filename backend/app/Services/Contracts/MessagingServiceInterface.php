@@ -2,6 +2,7 @@
 
 namespace App\Services\Contracts;
 
+use App\Data\ConversationData;
 use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -12,7 +13,7 @@ interface MessagingServiceInterface
 
     public function getConversation(int $conversationId, int $userId): Conversation;
 
-    public function startConversation(int $userId, array $data): Conversation;
+    public function startConversation(int $userId, ConversationData $data): Conversation;
 
     public function deleteConversation(int $conversationId, int $userId): bool;
 

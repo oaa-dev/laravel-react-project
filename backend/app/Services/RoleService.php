@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use App\Data\RoleData;
 use App\Repositories\Contracts\RoleRepositoryInterface;
 use App\Services\Contracts\RoleServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\LaravelData\Optional;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -47,15 +49,15 @@ class RoleService implements RoleServiceInterface
         return $role;
     }
 
-    public function createRole(array $data): Role
+    public function createRole(RoleData $data): Role
     {
         $role = $this->roleRepository->create([
-            'name' => $data['name'],
+            'name' => $data->name,
             'guard_name' => 'api',
         ]);
 
-        if (isset($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
+        if (! $data->permissions instanceof Optional) {
+            $role->syncPermissions($data->permissions);
         }
 
         $role->load(['permissions']);
@@ -63,14 +65,14 @@ class RoleService implements RoleServiceInterface
         return $role;
     }
 
-    public function updateRole(int $id, array $data): Role
+    public function updateRole(int $id, RoleData $data): Role
     {
         $role = $this->roleRepository->update($id, [
-            'name' => $data['name'],
+            'name' => $data->name,
         ]);
 
-        if (isset($data['permissions'])) {
-            $role->syncPermissions($data['permissions']);
+        if (! $data->permissions instanceof Optional) {
+            $role->syncPermissions($data->permissions);
         }
 
         $role->load(['permissions']);

@@ -2,30 +2,16 @@
 
 namespace App\Data;
 
-use App\Models\Address;
-use Spatie\LaravelData\Attributes\MapOutputName;
 use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use Spatie\LaravelData\Optional;
 
-#[MapOutputName(SnakeCaseMapper::class)]
 class AddressData extends Data
 {
     public function __construct(
-        public ?string $street,
-        public ?string $city,
-        public ?string $state,
-        public ?string $postalCode,
-        public ?string $country,
+        public string|Optional|null $street = new Optional(),
+        public string|Optional|null $city = new Optional(),
+        public string|Optional|null $state = new Optional(),
+        public string|Optional|null $postal_code = new Optional(),
+        public string|Optional|null $country = new Optional(),
     ) {}
-
-    public static function fromModel(Address $address): self
-    {
-        return new self(
-            street: $address->street,
-            city: $address->city,
-            state: $address->state,
-            postalCode: $address->postal_code,
-            country: $address->country,
-        );
-    }
 }

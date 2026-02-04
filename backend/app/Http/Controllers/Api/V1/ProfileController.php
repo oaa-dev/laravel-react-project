@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Data\ProfileData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\Profile\UpdateProfileRequest;
 use App\Http\Requests\Api\V1\Profile\UploadAvatarRequest;
@@ -86,7 +87,8 @@ class ProfileController extends Controller
     )]
     public function update(UpdateProfileRequest $request): JsonResponse
     {
-        $profile = $this->profileService->updateProfile(auth()->id(), $request->validated());
+        $data = ProfileData::from($request->validated());
+        $profile = $this->profileService->updateProfile(auth()->id(), $data);
 
         return $this->successResponse(
             new ProfileResource($profile),

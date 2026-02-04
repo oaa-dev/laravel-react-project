@@ -2,11 +2,13 @@
 
 namespace App\Services;
 
+use App\Data\ProfileData;
 use App\Models\UserProfile;
 use App\Repositories\Contracts\ProfileRepositoryInterface;
 use App\Services\Contracts\ProfileServiceInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\UploadedFile;
+use Spatie\LaravelData\Optional;
 
 class ProfileService implements ProfileServiceInterface
 {
@@ -25,17 +27,21 @@ class ProfileService implements ProfileServiceInterface
         return $profile;
     }
 
-    public function updateProfile(int $userId, array $data): UserProfile
+    public function updateProfile(int $userId, ProfileData $data): UserProfile
     {
         $profile = $this->getProfileByUserId($userId);
 
-        $addressData = $data['address'] ?? null;
-        unset($data['address']);
+        $addressData = $data->address;
 
-        $profile->update($data);
+        $profileData = collect($data->toArray())
+            ->reject(fn ($value) => $value instanceof Optional)
+            ->except('address')
+            ->toArray();
 
-        if ($addressData !== null) {
-            $profile->updateOrCreateAddress($addressData);
+        $profile->update($profileData);
+
+        if (! $addressData instanceof Optional && $addressData !== null) {
+            $profile->updateOrCreateAddress($addressData->toArray());
         }
 
         return $profile->fresh(['address', 'media']);

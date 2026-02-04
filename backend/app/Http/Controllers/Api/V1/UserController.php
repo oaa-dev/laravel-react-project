@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Data\UserData;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\User\StoreUserRequest;
 use App\Http\Requests\Api\V1\User\SyncRolesRequest;
@@ -108,7 +109,8 @@ class UserController extends Controller
     )]
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = $this->userService->createUser($request->validated());
+        $data = UserData::from($request->validated());
+        $user = $this->userService->createUser($data);
 
         return $this->createdResponse(
             new UserResource($user),
@@ -189,7 +191,8 @@ class UserController extends Controller
     )]
     public function update(UpdateUserRequest $request, int $id): JsonResponse
     {
-        $user = $this->userService->updateUser($id, $request->validated());
+        $data = UserData::from($request->validated());
+        $user = $this->userService->updateUser($id, $data);
 
         return $this->successResponse(
             new UserResource($user),
